@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/css/materialize.min.css">
+  <link href="http://cdn.bootcss.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
+  <script src='./vue.js'></script>
+  <style>
+   .hide {
+      display: none;
+    }
+  </style>
+  <title>任务清单</title>
+</head>
+<body>
+  <div class="container" id="root">
+    <div class="row">
+      <div class="col s12">
+        <div id="main" class="card">
+          <div class="card-content">
+            <span class="card-title">任务清单</span>
+            <div class="row">
+              <form id="task-form">
+                <div class="input-field col s12">
+                  <input type="text" name="task" id="task" v-model="inputValue">
+                  <label for="task">新的任务</label>
+                </div>
+                <input type="submit" value="添加任务" class="btn"  @click="handleSubmit">
+               
+              </form>
+            </div>
+          </div>
+          <div class="card-action">
+            <h5 id="task-title">我的任务</h5>
+            <!-- <div class="input-field col s12">
+              <input type="text" name="filter" id="filter" @keyup="filterTask">
+              <label for="filter">筛选任务</label>
+            </div> -->
+            <ul class="collection" >
+              <!-- <li class="collection-item" >{{item}}<a class="delete-item secondary-content"><i class="fa fa-remove"></i></a></li> -->
+              <!-- <li class="collection-item">任务 2<a class="delete-item secondary-content"><i class="fa fa-remove"></i></a></li> -->
+              <todo-item v-for="(item,index) of list" 
+              :key="index"
+              :content="item"
+              :index="index"
+              @delete="handleDelete"
+             
+              >
+            </todo-item>
+            </ul>
+         
+            <a href="#" class="clear-tasks btn black" @click="clearAll">清除任务</a>
+        
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js">
+  </script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
+
+
+ <script>
+   Vue.component('todo-item',{
+    props:['content','index'],
+    template:'<li class="collection-item" >{{content}}<a class="delete-item secondary-content"><i class="fa fa-remove"  @click="handleClick"></i></a></li>',
+    methods:{
+        handleClick:function(e){
+            // 向外触发delete事件，值也向外触发是this.index
+            this.$emit('delete',this.index);
+           
+          
+            // e.preventDefault();
+            // e.stopPropagation()
+        }
+    }
+})
+    new Vue({
+        // 不定义template 会到 #root 下，将#root下的作为模板
+        el:"#root",
+        data:{
+            inputValue:'',
+            list:[],
+            searchString: "",
+        },
+        methods:{
+            handleSubmit: function(e){
+                this.list.push(this.inputValue);
+                this.inputValue='';
+                e.preventDefault();
+        },
+        handleDelete:function(index){
+            this.list.splice(index,1);
+        },
+        clearAll:function(){
+          this.list=[];
+          // e.stopPropagation();    // 阻止冒泡
+          // e.preventDefault();
+        },
+        filterTask:function(e){
+          // console.log( e.target.value);
+          var list_arrays=this.list;
+          const inputText = e.target.value;
+          list_arrays.filter(function(item){
+            if(item.indexOf(inputText)!=-1){
+              console.log("if");
+            }else{
+              console.log("else");
+            }
+          })
+          
+        }},
+      
+  });
+ </script>
+</html>
